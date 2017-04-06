@@ -24,7 +24,8 @@ if (window.Worker) { // Check if Browser supports the Worker api.
 		myWorker.postMessage({
 			type: "search",
 			start: 3,
-			stop: 9
+			finish: 9,
+			product: 11*13
 		});
 	  console.log('Message posted to worker');
 	};

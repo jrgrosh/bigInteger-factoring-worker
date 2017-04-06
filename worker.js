@@ -17,11 +17,12 @@ function success(p, q, m){
   console.log("Success");
 }
 
-function failure(beginning, end){
+function failure(beginning, end, prod){
   postMessage(JSON.stringify({
     type: "failure",
     start: beginning.toString(),
-    finish: end.toString()
+    finish: end.toString(),
+    product: prod.toString()
   }));
   console.log("Failure");
 }
@@ -45,7 +46,7 @@ function search(start, finish, product){
   if(m.isDivisibleBy(i)){
     success(i, m.divide(i), m);
   } else{
-    failure(start, stop);
+    failure(start, stop, m);
   }
 
 }
@@ -60,16 +61,14 @@ onmessage = function(e) {
   //console.log("message = " + JSON.stringify(e));
   console.log(e);
   if(e.data.type === 'search'){
-    workerResult = 'Result: ' + 5;
-
-  }
-  else{
+    search(e.data.start, e.data.finish, e.data.product)
+  }else{
   console.log('Message received from main script');
    workerResult = 'Result: ' + 4;
   console.log('Posting message back to main script');
   }
-  postMessage(workerResult);
-  search(3, 898, 988027)
+  //postMessage(workerResult);
+  //search(3, 898, 988027)
 }
 /*
 <script src="http://peterolson.github.com/BigInteger.js/BigInteger.min.js"></script>
