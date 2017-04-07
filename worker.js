@@ -52,7 +52,13 @@ function search(start, finish, product){
 }
 
 
-
+function postProgress(){
+  postMessage(JSON.stringify({
+    type: "progress",
+    index: i.toString(),
+    stop: stop.toString()
+  }));
+}
 
 
 
@@ -61,7 +67,9 @@ onmessage = function(e) {
   //console.log("message = " + JSON.stringify(e));
   console.log(e);
   if(e.data.type === 'search'){
-    search(e.data.start, e.data.finish, e.data.product)
+    search(e.data.start, e.data.finish, e.data.product);
+  }else if(e.data.type === 'progress'){
+    postProgress();
   }else{
   console.log('Message received from main script');
    workerResult = 'Result: ' + 4;

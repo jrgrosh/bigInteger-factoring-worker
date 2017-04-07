@@ -20,12 +20,16 @@ if (window.Worker) { // Check if Browser supports the Worker api.
 	  console.log('Message posted to worker');
 	};
 	*/
+	//15485867	15486277
 	third.onclick = function() {
 		myWorker.postMessage({
 			type: "search",
 			start: 3,
-			finish: 9,
-			product: 11*13
+			finish: "1050809356352027836051",
+			product: "1050809356352027836051"
+		});
+		myWorker.postMessage({
+			type: "progress"
 		});
 	  console.log('Message posted to worker');
 	};
