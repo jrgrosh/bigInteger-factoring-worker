@@ -4,7 +4,7 @@ importScripts('node_modules/big-integer/BigInteger.min.js');
 var m = bigInt(5);
 var i = bigInt(3);
 var start = bigInt(3);
-var stop = bigInt(5)
+var stop = bigInt(5);
 console.log("m = " + String(m));
 
 function success(p, q, m){
@@ -27,30 +27,29 @@ function failure(beginning, end, prod){
   console.log("Failure");
 }
 
-function search(start, finish, product){
+function beginSearch(start, finish, product){
   start = bigInt(start);
   i = bigInt(start);
   stop = bigInt(finish);
   m = bigInt(product);
-
-  while(i.lesser(stop)){
-    if(m.isDivisibleBy(i)){
-      console.log(i.toString() + " is a factor of m");
-      break;
-    }
-
-    i = i.plus(2)
-
-  }
-
-  if(m.isDivisibleBy(i)){
-    success(i, m.divide(i), m);
-  } else{
-    failure(start, stop, m);
-  }
-
+  search();
 }
 
+function search(){
+  if(i.lesser(stop)){
+    if(m.isDivisibleBy(i)){
+      console.log(i.toString() + " is a factor of m");
+      success(i, m.divide(i), m);
+      return;
+    }else{
+      i = i.plus(2)
+      setTimeout(search, 1);
+    }
+  }
+  else{
+    failure(start, stop, m);
+  }
+}
 
 function postProgress(){
   postMessage(JSON.stringify({
@@ -67,7 +66,7 @@ onmessage = function(e) {
   //console.log("message = " + JSON.stringify(e));
   console.log(e);
   if(e.data.type === 'search'){
-    search(e.data.start, e.data.finish, e.data.product);
+    beginSearch(e.data.start, e.data.finish, e.data.product);
   }else if(e.data.type === 'progress'){
     postProgress();
   }else{

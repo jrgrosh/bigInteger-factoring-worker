@@ -21,6 +21,7 @@ if (window.Worker) { // Check if Browser supports the Worker api.
 	};
 	*/
 	//15485867	15486277
+	//991 * 997
 	third.onclick = function() {
 		myWorker.postMessage({
 			type: "search",
@@ -28,6 +29,14 @@ if (window.Worker) { // Check if Browser supports the Worker api.
 			finish: "1050809356352027836051",
 			product: "1050809356352027836051"
 		});
+		let a = 0;
+		let b = 0
+		while(a<100000000){
+			while(b<10000000){
+				b+=1
+			}
+			a+=1
+		}
 		myWorker.postMessage({
 			type: "progress"
 		});
