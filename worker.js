@@ -1,38 +1,30 @@
-//<script src="http://peterolson.github.com/BigInteger.js/BigInteger.min.js"></script>
-//const bigInt = require('big-integer');
 importScripts('node_modules/big-integer/BigInteger.min.js');
 var m = bigInt(5);
 var i = bigInt(3);
 var start = bigInt(3);
 var stop = bigInt(5);
-console.log("m = " + String(m));
+var running = false;
 
 function success(p, q, m){
-  postMessage(JSON.stringify({
-    type: "success",
-    factor1: p.toString(),
-    factor2: q.toString(),
-    product: m.toString()
-  }));
-  console.log("Success");
+  postMessage({
+    type: "SOLUTION_FOUND",
+    p: p.toString(),
+    q: q.toString(),
+    n: m.toString()
+  });
 }
 
-function failure(beginning, end, prod){
+function requestWork(){
   postMessage(JSON.stringify({
-    type: "failure",
-    start: beginning.toString(),
-    finish: end.toString(),
-    product: prod.toString()
+    type: "REQUEST_FOR_WORK"
   }));
-  console.log("Failure");
 }
 
-function beginSearch(start, finish, product){
+function setSearchParameters(start, finish, product){
   start = bigInt(start);
   i = bigInt(start);
   stop = bigInt(finish);
   m = bigInt(product);
-  search();
 }
 
 function search(){
@@ -43,56 +35,42 @@ function search(){
       return;
     }else{
       i = i.plus(2)
-      setTimeout(search, 1);
+      setTimeout(search);
     }
   }
   else{
-    failure(start, stop, m);
+    requestWork();
   }
 }
-
-function postProgress(){
-  postMessage(JSON.stringify({
-    type: "progress",
-    index: i.toString(),
-    stop: stop.toString()
-  }));
-}
-
-
 
 onmessage = function(e) {
-  var workerResult = undefined;
-  //console.log("message = " + JSON.stringify(e));
-  console.log(e);
-  if(e.data.type === 'search'){
-    beginSearch(e.data.start, e.data.finish, e.data.product);
-  }else if(e.data.type === 'progress'){
-    postProgress();
-  }else{
-  console.log('Message received from main script');
-   workerResult = 'Result: ' + 4;
-  console.log('Posting message back to main script');
+  if(e.data.type === 'WORK_INFO'){
+    setSearchParameters(e.data.startIndex, e.data.stopIndex, e.data.product);
+    if(running === false){
+      search();
+      running = true;
+    }
+  } else if(e.data.type === 'WORK_REQUEST'){
+    var p1_startIndex = start;
+    var p1_stopIndex =  start.add((stop.subtract(start)).divide(2));
+    var p2_startIndex = p1_stopIndex;
+    var p2_stopIndex = stop;
+
+    start = p1_startIndex;
+    stop = p1_stopIndex;
+
+    postMessage({
+      type: 'WORK_INFO',
+      peerID: e.data.peerID,
+      connectionType: e.data.connectionType,
+      thisCurrent: i.toString(),
+      thisStart: start.toString(),
+      thisStop: stop.toString(),
+      startIndex: p2_startIndex.toString(),
+      stopIndex: p2_stopIndex.toString(),
+      product: m.toString()
+    });
+  } else{
+    console.error("Invalid message type received. Type = " + e.data.type);
   }
-  //postMessage(workerResult);
-  //search(3, 898, 988027)
 }
-/*
-<script src="http://peterolson.github.com/BigInteger.js/BigInteger.min.js"></script>
-const bigInt = require('big-integer');
-const p = bigInt(179425867	);
-const q = bigInt(179426341);
-const m = p.multiply(q);
-
-console.log("m = " + String(m));
-
-let i = bigInt(3);
-while(i.lesser(m)){
-  if(m.isDivisibleBy(i)){
-    console.log(i.toString() + " is a factor of m");
-    break;
-  }
-
-  i = i.plus(2)
-
-}*/

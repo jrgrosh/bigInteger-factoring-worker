@@ -24,28 +24,40 @@ if (window.Worker) { // Check if Browser supports the Worker api.
 	//991 * 997
 	third.onclick = function() {
 		myWorker.postMessage({
-			type: "search",
-			start: 3,
-			finish: "1050809356352027836051",
-			product: "1050809356352027836051"
+			type: "WORK_INFO",
+			startIndex: 3,
+			stopIndex: "143",
+			product: "143"
 		});
+
+		/*
 		let a = 0;
 		let b = 0
-		while(a<100000000){
-			while(b<10000000){
+		while(a<100000){
+			b = 0
+			while(b<100000){
 				b+=1
 			}
 			a+=1
 		}
+
+		*/
+		myWorker.postMessage({
+			type: "WORK_REQUEST"
+		});
+		/*
+
 		myWorker.postMessage({
 			type: "progress"
-		});
+		});*/
 	  console.log('Message posted to worker');
 	};
 
 
 	myWorker.onmessage = function(e) {
-		result.textContent = e.data;
+		console.log(e);
+
+		result.textContent = "The factors be " + e.data.p + " and " + e.data.q + ".";
 		console.log('Message received from worker');
 	};
 }
